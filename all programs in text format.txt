@@ -1,0 +1,461 @@
+######1st######
+import spacy
+
+# Load English tokenizer, tagger, parser, NER, and word vectors
+nlp = spacy.load("en_core_web_sm")
+
+# Sample text for analysis
+text = "Natural Language Processing is a fascinating field of study."
+
+# Process the text with spaCy
+doc = nlp(text)
+
+# Extracting tokens and lemmatization
+tokens = [token.text for token in doc]
+lemmas = [token.lemma_ for token in doc]
+print("Tokens:", tokens)
+print("Lemmas:", lemmas)
+
+# Dependency parsing
+print("\nDependency Parsing:")
+for token in doc:
+    print(token.text, token.dep_, token.head.text, token.head.pos_,
+          [child for child in token.children])
+
+
+####1st case study####
+import spacy
+
+# Load English tokenizer, tagger, parser, NER, and word vectors
+nlp = spacy.load("en_core_web_sm")
+
+# Sample customer feedback data
+customer_feedback = [
+    "The product is amazing! I love the quality.",
+    "The customer service was terrible, very disappointed.",
+    "Great experience overall, highly recommended.",
+    "The delivery was late, very frustrating."
+]
+
+def analyze_feedback(feedback):
+    for idx, text in enumerate(feedback, start=1):
+        print(f"\nAnalyzing Feedback {idx}: '{text}'")
+        doc = nlp(text)
+        tokens = [token.text for token in doc]
+        lemmas = [token.lemma_ for token in doc]
+        print("Tokens:", tokens)
+        print("Lemmas:", lemmas)
+        print("\nDependency Parsing:")
+        for token in doc:
+            print(token.text, token.dep_, token.head.text, token.head.pos_,
+                  [child for child in token.children])
+
+if __name__ == "__main__":
+    analyze_feedback(customer_feedback)
+
+
+
+#####2nd#####
+#2nd
+import nltk
+import random
+nltk.download('punkt')
+nltk.download('gutenberg')
+words = nltk.corpus.gutenberg.words()
+bigrams = list(nltk.bigrams(words))
+starting_word = "the"
+generated_text = [starting_word]
+for _ in range(20):
+  possible_words = [word2 for (word1, word2) in bigrams if word1.lower() == generated_text[-1].lower()]
+  next_word = random.choice(possible_words)
+  generated_text.append(next_word)
+  print(' '.join(generated_text))
+
+
+#####2nd case study####
+#2d cs
+
+import torch
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+class EmailAutocompleteSystem:
+    def __init__(self):
+        self.model_name = "gpt2"
+        self.tokenizer = GPT2Tokenizer.from_pretrained(self.model_name)
+        self.model = GPT2LMHeadModel.from_pretrained(self.model_name)
+
+    def generate_suggestions(self, user_input, context):
+        input_text = f"{context} {user_input}"
+        input_ids = self.tokenizer.encode(input_text, return_tensors="pt")
+        with torch.no_grad():
+            output = self.model.generate(input_ids, max_length=50, num_return_sequences=1,no_repeat_ngram_size=2)
+        generated_text = self.tokenizer.decode(output[0], skip_special_tokens=True)
+        suggestions = generated_text.split()[len(user_input.split()):]
+        return suggestions
+
+if __name__ == "__main__":
+    autocomplete_system = EmailAutocompleteSystem()
+    email_context = "Subject: Discussing Project Proposal\nHi [Recipient],"
+    while True:
+        user_input = input("Enter your sentence (type 'exit' to end): ")
+        if user_input.lower() == 'exit':
+            break
+        suggestions = autocomplete_system.generate_suggestions(user_input, email_context)
+        if suggestions:
+            print("Autocomplete Suggestions:", suggestions)
+        else:
+            print("No suggestions available.")
+
+
+
+
+####3rd###
+#3rd
+import pandas as pd
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import make_pipeline
+from sklearn.svm import LinearSVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+# Load the 20 Newsgroups dataset
+categories = ['sci.med', 'sci.space', 'comp.graphics', 'talk.politics.mideast']
+newsgroups_train = fetch_20newsgroups(subset='train', categories=categories)
+newsgroups_test = fetch_20newsgroups(subset='test', categories=categories)
+# Split the data into training and testing sets
+X_train = newsgroups_train.data
+X_test = newsgroups_test.data
+y_train = newsgroups_train.target
+y_test = newsgroups_test.target
+# Create a pipeline with TF-IDF vectorizer and LinearSVC classifier
+model = make_pipeline(
+TfidfVectorizer(),
+LinearSVC()
+)
+# Train the model
+model.fit(X_train, y_train)
+# Predict labels for the test set
+predictions = model.predict(X_test)
+# Evaluate the model
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
+print("\nClassification Report:")
+print(classification_report(y_test, predictions))
+
+
+#######3rd case study####
+#3 cs
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load the 20 Newsgroups dataset as a proxy for customer support emails
+newsgroups = fetch_20newsgroups(subset='all', categories=['comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware', 'rec.autos', 'rec.motorcycles'])
+
+# Prepare data and target labels
+X = newsgroups.data
+y = newsgroups.target
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create TF-IDF vectorizer
+vectorizer = TfidfVectorizer(stop_words='english', max_features=10000)
+X_train = vectorizer.fit_transform(X_train)
+X_test = vectorizer.transform(X_test)
+
+# Train the LinearSVC classifier
+classifier = LinearSVC()
+classifier.fit(X_train, y_train)
+
+# Predict labels for the test set
+predictions = classifier.predict(X_test)
+
+# Evaluate the classifier
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
+print("\nClassification Report:")
+print(classification_report(y_test, predictions, target_names=newsgroups.target_names))
+
+#####4th#####
+
+#4
+# Install necessary libraries
+!pip install gensim
+!pip install nltk
+# Import required libraries
+import gensim.downloader as api
+from nltk.tokenize import word_tokenize
+# Download pre-trained word vectors (Word2Vec)
+word_vectors = api.load("word2vec-google-news-300")
+# Sample sentences
+sentences = [
+"Natural language processing is a challenging but fascinating field.",
+"Word embeddings capture semantic meanings of words in a vector space."
+]
+# Tokenize sentences
+tokenized_sentences = [word_tokenize(sentence.lower()) for sentence in sentences]
+# Perform semantic analysis using pre-trained word vectors
+for tokenized_sentence in tokenized_sentences:
+    for word in tokenized_sentence:
+        if word in word_vectors:
+            similar_words = word_vectors.most_similar(word)
+            print(f"Words similar to '{word}': {similar_words}")
+        else:
+            print(f"'{word}' is not in the pre-trained Word2Vec model.")
+
+
+
+######4th case study###
+import nltk
+from nltk.corpus import wordnet
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+# Initialize NLTK resources
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+# Function to perform semantic analysis
+def semantic_analysis(text):
+    tokens = word_tokenize(text)
+    stop_words = set(stopwords.words('english'))
+    filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_tokens = [lemmatizer.lemmatize(token) for token in filtered_tokens]
+    synonyms = set()
+    for token in lemmatized_tokens:
+        for syn in wordnet.synsets(token):
+            for lemma in syn.lemmas():
+                synonyms.add(lemma.name())
+    return list(synonyms)
+
+# Example customer queries
+customer_queries = [
+    "I received a damaged product. Can I get a refund?",
+    "I'm having trouble accessing my account.",
+    "How can I track my order status?",
+    "The item I received doesn't match the description.",
+    "Is there a discount available for bulk orders?"
+]
+
+# Semantic analysis for each query
+for query in customer_queries:
+    print("Customer Query:", query)
+    synonyms = semantic_analysis(query)
+    print("Semantic Analysis (Synonyms):", synonyms)
+    print("\n")
+
+
+
+####5th######
+#5
+# Install necessary libraries
+!pip install scikit-learn
+!pip install nltk
+# Import required libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report
+from nltk.corpus import movie_reviews # Sample dataset from NLTK
+# Download NLTK resources (run only once if not downloaded)
+import nltk
+nltk.download('movie_reviews')
+# Load the movie_reviews dataset
+documents = [(list(movie_reviews.words(fileid)), category)
+for category in movie_reviews.categories()
+for fileid in movie_reviews.fileids(category)]
+# Convert data to DataFrame
+df = pd.DataFrame(documents, columns=['text', 'sentiment'])
+# Split data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(df['text'], df['sentiment'], test_size=0.2,
+random_state=42)
+# Initialize TF-IDF vectorizer
+tfidf_vectorizer = TfidfVectorizer()
+# Fit and transform the training data
+X_train_tfidf = tfidf_vectorizer.fit_transform(X_train.apply(' '.join))
+# Initialize SVM classifier
+svm_classifier = SVC(kernel='linear')
+# Train the classifier
+svm_classifier.fit(X_train_tfidf, y_train)
+# Transform the test data
+X_test_tfidf = tfidf_vectorizer.transform(X_test.apply(' '.join))
+# Predict on the test data
+y_pred = svm_classifier.predict(X_test_tfidf)
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+# Display classification report
+print(classification_report(y_test, y_pred))
+
+
+##########5th case study########
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# Download NLTK resources (only required once)
+nltk.download('vader_lexicon')
+
+# Sample reviews
+reviews = [
+    "This product is amazing! I love it.",
+    "The product was good, but the packaging was damaged.",
+    "Very disappointing experience. Would not recommend.",
+    "Neutral feedback on the product.",
+]
+
+# Initialize Sentiment Intensity Analyzer
+sid = SentimentIntensityAnalyzer()
+
+# Analyze sentiment for each review
+for review in reviews:
+    print("Review:", review)
+    scores = sid.polarity_scores(review)
+    print("Sentiment:", end=' ')
+    if scores['compound'] > 0.05:
+        print("Positive")
+    elif scores['compound'] < -0.05:
+        print("Negative")
+    else:
+        print("Neutral")
+    print()
+
+
+######6th########
+# Install NLTK (if not already installed)
+!pip install nltk
+# Import necessary libraries
+import nltk
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+# Sample text for POS tagging
+text = "Parts of speech tagging helps to understand the function of each word in a sentence."
+# Tokenize the text into words
+tokens = nltk.word_tokenize(text)
+# Perform POS tagging
+pos_tags = nltk.pos_tag(tokens)
+# Display the POS tags
+print("POS tags:", pos_tags)
+
+#####6th case study####
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+
+# Download NLTK resources (if not already downloaded)
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+def pos_tagging(text):
+    sentences = sent_tokenize(text)
+    tagged_tokens = []
+    for sentence in sentences:
+        tokens = word_tokenize(sentence)
+        tagged_tokens.extend(nltk.pos_tag(tokens))
+    return tagged_tokens
+
+def main():
+    article_text = """Manchester United secured a 3-1 victory over Chelsea in yesterday's match.
+    Goals from Rashford, Greenwood, and Fernandes sealed the win for United.
+    Chelsea's only goal came from Pulisic in the first half.
+    The victory boosts United's chances in the Premier League title race.
+    """
+    tagged_tokens = pos_tagging(article_text)
+    print("Original Article Text:\n", article_text)
+    print("\nParts of Speech Tagging:")
+    for token, pos_tag in tagged_tokens:
+        print(f"{token}: {pos_tag}")
+
+if __name__ == "__main__":
+    main()
+
+
+#####7th#####
+#7th 
+!pip install nltk
+import nltk
+from nltk import RegexpParser
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+
+# Download NLTK resources (run only once if not downloaded)
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+# Sample sentence
+sentence = "The quick brown fox jumps over the lazy dog"
+
+# Tokenize the sentence
+tokens = word_tokenize(sentence)
+
+# POS tagging
+tagged = pos_tag(tokens)
+
+# Define a chunk grammar using regular expressions
+# NP (noun phrase) chunking: "NP: {<DT>?<JJ>*<NN>}"
+# This grammar captures optional determiner (DT), adjectives (JJ), and nouns (NN) as a noun phrase
+chunk_grammar = r"""
+NP: {<DT>?<JJ>*<NN>}
+"""
+
+# Create a chunk parser with the defined grammar
+chunk_parser = RegexpParser(chunk_grammar)
+
+# Parse the tagged sentence to extract chunks
+chunks = chunk_parser.parse(tagged)
+
+# Display the chunks
+for subtree in chunks.subtrees():
+    if subtree.label() == 'NP':
+        print(subtree)
+
+
+#####7th case study###
+import nltk
+import os
+
+# Set NLTK data path
+nltk.data.path.append("/usr/local/share/nltk_data")
+
+# Download the 'punkt' tokenizer model
+nltk.download('punkt')
+
+# Download the 'averaged_perceptron_tagger' model
+nltk.download('averaged_perceptron_tagger')
+
+# Sample text
+text = "The quick brown fox jumps over the lazy dog."
+
+# Tokenize the text into words
+words = nltk.word_tokenize(text)
+
+# Perform part-of-speech tagging
+pos_tags = nltk.pos_tag(words)
+
+# Define chunk grammar
+chunk_grammar = r"""
+NP: {<DT>?<JJ>*<NN>} # Chunk sequences of DT, JJ, NN
+"""
+
+# Create chunk parser
+chunk_parser = nltk.RegexpParser(chunk_grammar)
+
+# Apply chunking
+chunked_text = chunk_parser.parse(pos_tags)
+
+# Extract noun phrases
+noun_phrases = []
+for subtree in chunked_text.subtrees(filter=lambda t: t.label() == 'NP'):
+    noun_phrases.append(' '.join(word for word, tag in subtree.leaves()))
+
+# Output
+print("Original Text:", text)
+print("Noun Phrases:")
+for phrase in noun_phrases:
+    print("-", phrase)
+
